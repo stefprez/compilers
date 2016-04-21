@@ -7,4 +7,10 @@ class Parser:
                     "switch", "typedef", "union", "unsigned", "void",
                     "volatile", "while"])
 
-    def __init__(self):
+    operators = set(["+", "-", "*", "/"])
+
+    def __init__(self, symbol_table):
+        self.symbol_table = symbol_table
+
+    def is_keyword(input):
+        return input in keywords

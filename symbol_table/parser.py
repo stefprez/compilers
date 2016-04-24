@@ -35,11 +35,9 @@ class Parser:
         words = line.split()
 
         for word in words:
-            # parse_word(word)
-            if self.is_keyword(word):
-                if self.is_type(word):
-                    self.process_declaration(words)
-                    break
+            if self.is_type(word):
+                self.process_declaration(words)
+                break
 
     def process_declaration(self, words):
         for i, word in enumerate(words):
@@ -47,24 +45,67 @@ class Parser:
                 if self.is_function(words[i + 1]):
                     self.process_function()
                 else:
-                    self.process_variable(words)
+                    print "Not func: {0}".format(self.curr_line)
+                    self.process_variable()
+
+                break
 
     def process_function(self):
+        # Use regex to find return type, function name, and parameter list
         regex_match = re.search("(\w+) (\w+)\((.*)\)", self.curr_line)
+
         return_type = regex_match.group(1)
         func_name = regex_match.group(2)
         param_list = regex_match.group(3)
+
+        # Correctly parse parameter list
         params = self.parse_param_list(param_list)
         
+        # Build new Function object and add it to the symbol table
         self.symbol_table.add(Function(func_name, params, return_type,
             self.line_num))
         
-    def process_variable(self, words):
-        pass
+    def process_variable(self):
+        # Use regex to find variable type and variable names
+        regex_match = re.search("(int|char) (.+);", self.curr_line)
+        if not regex_match:
+            print "No match: {0}".format(self.curr_line)
+            return
+        primitive_type = regex_match.group(1)
+        var_names, var_types = self.parse_var_names(regex_match.group(2))
+
+        for i, var_type in enumerate(var_types):
+            if var_type is PrimitiveVariable:
+                self.symbol_table.add(PrimitiveVariable(var_names[i],
+                    primitive_type, "TODO", "TODO", self.line_num))  
+
+    def parse_var_names(self, raw_var_names):
+        raw_var_names = raw_var_names.split(",")
+        var_types = []
+        var_names = []
         
+        for var_name in raw_var_names:
+            if "=" in var_name:
+                # Strip out initialization from variable name
+                var_name = var_name[:var_name.index("=") - 1]
+            var_names.append(var_name)
+
+            if "*" in var_name:
+                var_types.append(Pointer)
+            elif "[" in var_name:
+                var_types.append(Array)
+            else:
+                var_types.append(PrimitiveVariable)
+
+        return var_names, var_types
+
+
     def parse_param_list(self, param_list):
+        # Process the string of parameters into separate parameter objects
+
         if not param_list:
             return []
+
         raw_params = param_list.split(',')
         params = []
         
@@ -85,7 +126,4 @@ class Parser:
 
     def is_array(self, word):
         return word[-1] == "]"
-
-    # def parse_word(word):
-        # if is_keyword(word):
 

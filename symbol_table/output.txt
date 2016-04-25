@@ -1,0 +1,159 @@
+Symbol Table
+#########################
+**Primitive Variables**
+Primitive Name: w
+Type: int
+Procedure Name: None
+Lexical Level: global
+Line Counter: 1
+
+Primitive Name: x
+Type: char
+Procedure Name: None
+Lexical Level: global
+Line Counter: 2
+
+Primitive Name:  c
+Type: int
+Procedure Name: None
+Lexical Level: global
+Line Counter: 3
+
+Primitive Name:  z
+Type: int
+Procedure Name: main
+Lexical Level: 1.1
+Line Counter: 7
+
+Primitive Name: a
+Type: int
+Procedure Name: main
+Lexical Level: 1.2
+Line Counter: 10
+
+Primitive Name:  x
+Type: int
+Procedure Name: main
+Lexical Level: 1.2
+Line Counter: 10
+
+Primitive Name: c
+Type: char
+Procedure Name: main
+Lexical Level: 1.2.1
+Line Counter: 12
+
+Primitive Name:  x
+Type: char
+Procedure Name: main
+Lexical Level: 1.2.1
+Line Counter: 12
+
+Primitive Name: d
+Type: int
+Procedure Name: main
+Lexical Level: 1.2.1
+Line Counter: 13
+
+Primitive Name: j
+Type: int
+Procedure Name: main
+Lexical Level: 1.2.1
+Line Counter: 14
+
+Primitive Name:  i
+Type: int
+Procedure Name: main
+Lexical Level: 1.2.1
+Line Counter: 14
+
+Primitive Name: my_int
+Type: int
+Procedure Name: main
+Lexical Level: 1.2.1
+Line Counter: 16
+
+Primitive Name:  other
+Type: int
+Procedure Name: main
+Lexical Level: 1.2.1
+Line Counter: 16
+
+Primitive Name: procNameTest
+Type: int
+Procedure Name: None
+Lexical Level: global
+Line Counter: 23
+
+Primitive Name: a
+Type: int
+Procedure Name: example2
+Lexical Level: 2
+Line Counter: 26
+
+Primitive Name: a
+Type: int
+Procedure Name: example3
+Lexical Level: 3
+Line Counter: 30
+
+**Functions**
+Function Name: main
+Number of Parameters: 0
+Return Value Type: int
+Line Counter: 4
+
+Function Name: example2
+Number of Parameters: 2
+Parameter 1
+-Parameter Name: x
+-Parameter Type: int
+Parameter 2
+-Parameter Name: y
+-Parameter Type: int
+Return Value Type: void
+Line Counter: 25
+
+Function Name: example3
+Number of Parameters: 3
+Parameter 1
+-Parameter Name: a
+-Parameter Type: int
+Parameter 2
+-Parameter Name: b
+-Parameter Type: char
+Parameter 3
+-Parameter Name: c
+-Parameter Type: int
+Return Value Type: void
+Line Counter: 29
+
+**Array Variables**
+Array Name: b
+Type: int
+Procedure Name: None
+Lexical Level: global
+Number of Dimensions: 1
+Dimension 1
+-Upper Bound: 1
+Line Counter: 3
+
+Array Name: b
+Type: int
+Procedure Name: main
+Lexical Level: 1.1
+Number of Dimensions: 2
+Dimension 1
+-Upper Bound: 2
+Dimension 2
+-Upper Bound: 3
+Line Counter: 7
+
+**Pointers**
+Pointer Name: *c
+Dereferenced Type: int
+Procedure Name: main
+Lexical Level: 1
+Line Counter: 5
+
+#########################

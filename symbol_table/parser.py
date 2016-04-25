@@ -3,14 +3,6 @@ import re
 from symbol_table import *
 
 class Parser:
-    keywords = set(["auto", "break", "case", "char", "const", "continue",
-                    "default", "do", "else", "extern",
-                    "for", "goto", "if", "int", "register",
-                    "return", "signed", "sizeof", "static", "struct",
-                    "switch", "typedef", "union", "unsigned", "void",
-                    "volatile", "while"])
-
-    operators = set(["+", "-", "*", "/"])
 
     def __init__(self, symbol_table):
         self.symbol_table = symbol_table
@@ -20,9 +12,6 @@ class Parser:
         self.curr_line = ""
         self.curr_proc = "None"
         self.bracket_stack = []
-
-    def is_keyword(self, word):
-        return word in Parser.keywords
 
     def parse_file(self, input_file):
         with open(input_file) as input_file:
@@ -42,8 +31,10 @@ class Parser:
                 self.process_declaration(words)
                 break
             elif word == "{":
+                # New lexical level
                 self.push()
             elif word == "}":
+                # End of lexical level
                 self.pop()
 
     def process_declaration(self, words):
@@ -53,7 +44,6 @@ class Parser:
                     self.process_function()
                 else:
                     self.process_variable()
-
                 break
 
     def process_function(self):
@@ -85,17 +75,21 @@ class Parser:
 
         for i, var_type in enumerate(var_types):
             if var_type is PrimitiveVariable:
+                # Add new PrimitiveVariable to Symbol Table
                 self.symbol_table.add(PrimitiveVariable(var_names[i],
                     primitive_type, self.curr_proc, self.get_lexical_level(), self.line_num))  
             elif var_type is Pointer:
+                # Add new Pointer to Symbol Table
                 self.symbol_table.add(Pointer(var_names[i], primitive_type,
                 self.curr_proc, self.get_lexical_level(), self.line_num))
             elif var_type is ArrayVariable:
+                # Add new ArrayVariable to Symbol Table
                 dimensions, arr_name = self.process_dims(var_names[i])
                 self.symbol_table.add(ArrayVariable(arr_name,
                     primitive_type, self.curr_proc, self.get_lexical_level(), dimensions, self.line_num))
 
     def process_dims(self, raw_name):
+        # Get correct array name and dimension values
         name_and_dims_list = raw_name.split('[')                 
         arr_name = name_and_dims_list[0]
         dims = []
@@ -114,6 +108,7 @@ class Parser:
         self.bracket_stack.pop()
         self.decrement_lexical_level()
         if len(self.bracket_stack) == 0:
+            # Outside of a function
             self.lexical_level[0] = 0
             self.curr_proc = "None"
     
@@ -126,6 +121,7 @@ class Parser:
         self.lexical_level[index] = 0
 
     def get_lexical_level(self):
+        # Get lexical level string representation
         if self.lexical_level[0] == 0:
             return "global"
         else:
@@ -137,6 +133,7 @@ class Parser:
             return return_level
 
     def parse_var_names(self, raw_var_names):
+        # Parse variable names and types if mixed on line
         raw_var_names = raw_var_names.split(",")
         var_types = []
         var_names = []
@@ -148,14 +145,16 @@ class Parser:
             var_names.append(var_name)
 
             if "*" in var_name:
+                # Pointer
                 var_types.append(Pointer)
             elif "[" in var_name:
+                # Array
                 var_types.append(ArrayVariable)
             else:
+                # Primitive
                 var_types.append(PrimitiveVariable)
 
         return var_names, var_types
-
 
     def parse_param_list(self, param_list):
         # Process the string of parameters into separate parameter objects
@@ -177,10 +176,4 @@ class Parser:
 
     def is_type(self, word):
         return word in set(["int", "char", "void"])
-
-    def is_pointer(self, word):
-        return word[0] == "*"
-
-    def is_array(self, word):
-        return word[-1] == "]"
 

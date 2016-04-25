@@ -14,7 +14,8 @@ class Parser:
 
     def __init__(self, symbol_table):
         self.symbol_table = symbol_table
-        self.lexical_level = "global"
+        self.lexical_level = [0 for _ in range(0, 32)]
+        self.lex_counter = 0 
         self.line_num = 0
         self.curr_line = ""
         self.curr_proc = "None"
@@ -72,7 +73,9 @@ class Parser:
         
         # Set current procedure
         self.curr_proc = func_name
+        self.lexical_level[0] = self.lex_counter
         self.push()
+        self.lex_counter += 1
         
     def process_variable(self):
         # Use regex to find variable type and variable names
@@ -83,14 +86,14 @@ class Parser:
         for i, var_type in enumerate(var_types):
             if var_type is PrimitiveVariable:
                 self.symbol_table.add(PrimitiveVariable(var_names[i],
-                    primitive_type, self.curr_proc, self.lexical_level, self.line_num))  
+                    primitive_type, self.curr_proc, self.get_lexical_level(), self.line_num))  
             elif var_type is Pointer:
                 self.symbol_table.add(Pointer(var_names[i], primitive_type,
-                self.curr_proc, self.lexical_level, self.line_num))
+                self.curr_proc, self.get_lexical_level(), self.line_num))
             elif var_type is ArrayVariable:
                 dimensions, arr_name = self.process_dims(var_names[i])
                 self.symbol_table.add(ArrayVariable(arr_name,
-                    primitive_type, self.curr_proc, self.lexical_level, dimensions, self.line_num))
+                    primitive_type, self.curr_proc, self.get_lexical_level(), dimensions, self.line_num))
 
     def process_dims(self, raw_name):
         name_and_dims_list = raw_name.split('[')                 
@@ -105,11 +108,33 @@ class Parser:
 
     def push(self):
         self.bracket_stack.append("{")
+        self.increment_lexical_level()
 
     def pop(self):
         self.bracket_stack.pop()
+        self.decrement_lexical_level()
         if len(self.bracket_stack) == 0:
+            self.lexical_level[0] = 0
             self.curr_proc = "None"
+    
+    def increment_lexical_level(self):
+        index = len(self.bracket_stack) - 1
+        self.lexical_level[index] += 1
+    
+    def decrement_lexical_level(self):
+        index = len(self.bracket_stack) + 1
+        self.lexical_level[index] = 0
+
+    def get_lexical_level(self):
+        if self.lexical_level[0] == 0:
+            return "global"
+        else:
+            index = 1
+            return_level = str(self.lexical_level[0])
+            while self.lexical_level[index] > 0:
+                return_level += "." + str(self.lexical_level[index])
+                index += 1
+            return return_level
 
     def parse_var_names(self, raw_var_names):
         raw_var_names = raw_var_names.split(",")

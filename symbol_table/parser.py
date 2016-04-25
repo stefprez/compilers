@@ -17,6 +17,8 @@ class Parser:
         self.lexical_level = "global"
         self.line_num = 0
         self.curr_line = ""
+        self.curr_proc = "None"
+        self.bracket_stack = []
 
     def is_keyword(self, word):
         return word in Parser.keywords
@@ -38,6 +40,10 @@ class Parser:
             if self.is_type(word):
                 self.process_declaration(words)
                 break
+            elif word == "{":
+                self.push()
+            elif word == "}":
+                self.pop()
 
     def process_declaration(self, words):
         for i, word in enumerate(words):
@@ -45,7 +51,6 @@ class Parser:
                 if self.is_function(words[i + 1]):
                     self.process_function()
                 else:
-                    print "Not func: {0}".format(self.curr_line)
                     self.process_variable()
 
                 break
@@ -65,19 +70,46 @@ class Parser:
         self.symbol_table.add(Function(func_name, params, return_type,
             self.line_num))
         
+        # Set current procedure
+        self.curr_proc = func_name
+        self.push()
+        
     def process_variable(self):
         # Use regex to find variable type and variable names
         regex_match = re.search("(int|char) (.+);", self.curr_line)
-        if not regex_match:
-            print "No match: {0}".format(self.curr_line)
-            return
         primitive_type = regex_match.group(1)
         var_names, var_types = self.parse_var_names(regex_match.group(2))
 
         for i, var_type in enumerate(var_types):
             if var_type is PrimitiveVariable:
                 self.symbol_table.add(PrimitiveVariable(var_names[i],
-                    primitive_type, "TODO", "TODO", self.line_num))  
+                    primitive_type, self.curr_proc, self.lexical_level, self.line_num))  
+            elif var_type is Pointer:
+                self.symbol_table.add(Pointer(var_names[i], primitive_type,
+                self.curr_proc, self.lexical_level, self.line_num))
+            elif var_type is ArrayVariable:
+                dimensions, arr_name = self.process_dims(var_names[i])
+                self.symbol_table.add(ArrayVariable(arr_name,
+                    primitive_type, self.curr_proc, self.lexical_level, dimensions, self.line_num))
+
+    def process_dims(self, raw_name):
+        name_and_dims_list = raw_name.split('[')                 
+        arr_name = name_and_dims_list[0]
+        dims = []
+
+        for dim in name_and_dims_list[1:]:
+            dim_limit = int(dim[0])
+            dims.append(Dimension(dim_limit))
+
+        return dims, arr_name
+
+    def push(self):
+        self.bracket_stack.append("{")
+
+    def pop(self):
+        self.bracket_stack.pop()
+        if len(self.bracket_stack) == 0:
+            self.curr_proc = "None"
 
     def parse_var_names(self, raw_var_names):
         raw_var_names = raw_var_names.split(",")
@@ -93,7 +125,7 @@ class Parser:
             if "*" in var_name:
                 var_types.append(Pointer)
             elif "[" in var_name:
-                var_types.append(Array)
+                var_types.append(ArrayVariable)
             else:
                 var_types.append(PrimitiveVariable)
 

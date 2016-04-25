@@ -1,15 +1,15 @@
 static int w;
 char x;
-float b[10], c;
+int b[10], c;
 int main() {
-  int * c = 2;
+  int *c = 2;
   {
-    static int **b[2][3], z;
+    static int b[2][3], z;
   }
   {
     int a, x;
     {
-      double c, x;
+      char c, x;
       int d;
       int j, i;
       x = a - a + c / x * 2 % 3 % x + 3;
@@ -19,6 +19,8 @@ int main() {
     }
   }
 }
+
+int procNameTest;
 
 void example2(int x, int y) {
   int a = 9;

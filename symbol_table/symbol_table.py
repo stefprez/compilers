@@ -42,8 +42,8 @@ class SymbolTable:
             print "Number of Parameters: {0}".format(function.num_params)
             for i, parameter in enumerate(function.parameters, start=1):
                 print "Parameter {0}".format(i)
-                print "Parameter Name: {0}".format(parameter.name)
-                print "Parameter Type: {0}".format(parameter.param_type)
+                print "-Parameter Name: {0}".format(parameter.name)
+                print "-Parameter Type: {0}".format(parameter.param_type)
             print "Return Value Type: {0}".format(function.return_type)
             print "Line Counter: {0}".format(function.line_num)
             print
@@ -51,13 +51,13 @@ class SymbolTable:
         print "**Array Variables**"
         for array in self.arrays:
             print "Array Name: {0}".format(array.name)
-            print "Type: {0}".format(array.var_type)
+            print "Type: {0}".format(array.arr_type)
             print "Procedure Name: {0}".format(array.proc_name)
             print "Lexical Level: {0}".format(array.lex_level)
             print "Number of Dimensions: {0}".format(array.num_dims)
             for i, dimension in enumerate(array.dimensions, start=1):
                 print "Dimension {0}".format(i)
-                print "Upper Bound: {0}".format(dimension.upper_bound)
+                print "-Upper Bound: {0}".format(dimension.upper_bound)
             print "Line Counter: {0}".format(array.line_num)
             print
 
